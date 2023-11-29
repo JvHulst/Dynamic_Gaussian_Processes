@@ -12,10 +12,9 @@ Please use the following BibTeX citation when citing this work:
 @INPROCEEDINGS{Hulst2023,
 AUTHOR = {J. van Hulst and R. van Zuijlen and D. Antunes and W.P.M.H. Heemels},
 TITLE = {Estimation of Dynamic Gaussian Processes},
-BOOKTITLE = {IEEE Conference on Decision and Control (CDC) 2023, Singapore },
-MONTH = {},
+BOOKTITLE = {2023 IEEE 62nd Conference on Decision and Control (CDC)}
+MONTH = {December},
 YEAR = {2023},
-PAGES = {},
 }
 ```
 
