@@ -21,12 +21,12 @@
 
 
 % number of discrete bins used to fit the system functions:
-M_true = 1001;
+M_true = N_test;
 
 
 % create equally spaced set of points in function domain:
-dx = (x_max-x_min)/(M_true-1);
-x_fit = (x_min:dx:x_max).';
+dx_fit_true = (x_max-x_min)/(M_true-1);
+x_fit_true = (x_min:dx_fit_true:x_max).';
 
 
 % discrete bin bounds:
@@ -42,31 +42,31 @@ U_samp_true = NaN(M_true,p);
 
 % create and evaluate the basis functions:
 for i=1:M_true
-    u_true{i} = @(X) (double(bounds(i)<=X & X<bounds(i+1)));
-    U_fit_true(i,:) = u_true{i}(x_fit);
+    u_true{i} = @(X) (double(bounds(i)<=X & X<bounds(i+1))/(dx_fit_true));
+    U_fit_true(i,:) = u_true{i}(x_fit_true);
     U_test_true(i,:) = u_true{i}(x_test);
 end
 
 
 % fitting of system (simple since orthonormal):
-Lambda_U_true = U_fit_true.'*U_fit_true*dx;
+Lambda_U_true = U_fit_true.'*U_fit_true*dx_fit_true^2;
 
 Pinv_U_true = (U_fit_true.'*U_fit_true)\U_fit_true.';
 
 
 % evolution matrix:
-Lambda_true = Pinv_U_true*kf(x_fit,x_fit);
+Lambda_true = Pinv_U_true*kf(x_fit_true,x_fit_true);
 
 
 
 % initial conditions of the function:
-z_bar_true = Pinv_U_true*m(x_fit);
+z_bar_true = Pinv_U_true*m(x_fit_true);
 
-Lambda_f_true = Pinv_U_true*Q_f(x_fit,x_fit);
+Lambda_f_true = Pinv_U_true*Q_f(x_fit_true,x_fit_true);
 
 
 % disturbance covariance matrices:
-Lambda_w_true = Pinv_U_true*Q_w(x_fit,x_fit);
+Lambda_w_true = Pinv_U_true*Q_w(x_fit_true,x_fit_true);
 
 
 % make all covariance matrices symmetrical in case they are not:

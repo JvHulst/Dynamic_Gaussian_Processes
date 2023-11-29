@@ -21,12 +21,12 @@
 
 
 % number of equally spaced points used to fit the system functions:
-N_fit = 501;
+N_fit = N_test;
 
 
 % create equally spaced set of points in function domain:
-dx = (x_max-x_min)/(N_fit-1);
-x_fit = (x_min:dx:x_max).';
+dx_fit = (x_max-x_min)/(N_fit-1);
+x_fit = (x_min:dx_fit:x_max).';
 
 
 % initialize basis function variables:
@@ -77,12 +77,13 @@ switch basis
         n = 0;
         period = x_max-x_min;
         
+        % Alternate cos and sin bases. Divide by 2-norm:
         for i=1:M
             if rem(i,2)==1
-                u{i} = @(X) (Fourier_cos(X,n,period));
+                u{i} = @(X) (Fourier_cos(X,n,period)*sqrt(2)/sqrt(period));
                 n = n+1;
             else
-                u{i} = @(X) (Fourier_sin(X,n,period));
+                u{i} = @(X) (Fourier_sin(X,n,period)*sqrt(2)/sqrt(period));
             end
         end
 
@@ -92,7 +93,7 @@ switch basis
         bounds = x_min:db:x_max+1e-12;
 
         for i=1:M
-            u{i} = @(X) (double(bounds(i)<=X & X<bounds(i+1))/sqrt(db));
+            u{i} = @(X) (double(bounds(i)<=X & X<bounds(i+1))/(db));
         end
 end
 
@@ -127,7 +128,7 @@ Lambda_U = NaN(M,M);
 for i=1:M
     for j=1:M
         U_mat(:,:,(i-1)*M+j) = U_fit(i,:).'*U_fit(j,:);
-        Lambda_U(i,j) = sum(U_fit(i,:).*U_fit(j,:))*dx;
+        Lambda_U(i,j) = sum(U_fit(i,:).*U_fit(j,:))*dx_fit;
     end
 end
 
@@ -198,6 +199,9 @@ function U = Fourier_cos(X,n,period)
     
     U = cos(2*pi*n*X(:)/period);
 
+    if n==0
+        U = U./sqrt(2);
+    end
 end
 
 function K = squexp(U,V,sigma)

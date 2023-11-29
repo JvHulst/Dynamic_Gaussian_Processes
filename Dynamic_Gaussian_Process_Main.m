@@ -48,9 +48,11 @@ plot_basis_functions = 0;       % if set to 1, the basis functions are plotted
 
 
 % define evaluation range (gets overwritten if data is used):
-N_test = 625;                    % number of points in function estimate evaluation
-x_min = -10;                     % minimum input in function estimate evaluation
-x_max = 10;                      % maximum input in function estimate evaluation
+N_test = 501;                   % number of points in function estimate evaluation
+x_min = -10;                      % minimum input in function estimate evaluation
+x_max = 10;                    % maximum input in function estimate evaluation
+
+dx = (x_max-x_min)/(N_test-1);
 
 
 % number of observations at each timestep t (gets overwritten if data is used):
@@ -58,7 +60,7 @@ p = 5;
 
 
 % duration of simulation (gets overwritten if data is used):
-N = 11;
+N = 26;
 
 
 % number of bases:
@@ -74,8 +76,8 @@ basis = 'Fourier';
 
 % true system choice:
 % system = 'Discrete_approximation';
-system = 'Heat_equation';
-% system = 'Data';
+% system = 'Heat_equation';
+system = 'Data';
 
 
 %% System functions
@@ -87,36 +89,36 @@ delta_t = 1;                % time-discretization sample time
 kf = @(X,V) (  sqrt(delta_t*alpha)/2 * exp(-abs((X(:)-V(:).'))/sqrt(delta_t*alpha))  );         % time-discretized heat equation kernel
 % sigma2_kf = 0.5;
 % a_kf = 0.8;
-% kf = @(X,V) a_kf*squexp(X,V,sigma2_kf)/sqrt(2*pi)/sigma2_kf;    % smoothening kernel, normalized to have area 1 before multiplication by a_kf
-% kf = @(X,V) eq(X(:),V(:).')/(dx);                               % "integrator dynamics", kroneckerDelta
+% kf = @(X,V) a_kf*squexp(X,V,sigma2_kf)/sqrt(2*pi)/sigma2_kf;        % smoothening kernel, normalized to have area 1 before multiplication by a_kf
+% kf = @(X,V) double(abs(X(:)-V(:).')<=dx/2)/dx;                      % "integrator dynamics", approximate kroneckerDelta
 
 
 % initial function mean:
-% m = @(X) zeros(size(X,1),1);                                    % zero mean
+m = @(X) zeros(size(X,1),1);                                    % zero mean
 % m = @(X) ones(size(X,1),1);                                     % constant mean
-m = @(X) 0.3*squexp(X,0,1);                                   % bell curve around origin
+% m = @(X) 0.3*squexp(X,0,1);                                   % bell curve around origin
 % m = @(X) -2*X.^2+8;                                             % parabola centered on origin
 % m = @(X) double(abs(X(:))<=0.05)/0.1;                           % approximate impulse centered on origin
 
 
 % initial function covariance:
-a_f = 1e-2;
-sigma2_f = 1e-1;
-% Q_f = @(X,V) a_f*squexp(X,V,sigma2_f);                          % smooth initial condition variance
+a_f = 1e0;
+sigma2_f = 1e1;
+Q_f = @(X,V) a_f*squexp(X,V,sigma2_f);                          % smooth initial condition variance
 % Q_f = @(X,V) zeros(size(X,1),size(V,1));                        % no variance in i.c.
-Q_f = @(X,V) sigma2_f*eq(X(:),V(:).');  	                      % kroneckerDelta: resembles white noise, spatially uncorrelated.
+% Q_f = @(X,V) sigma2_f*eq(X(:),V(:).');  	                      % kroneckerDelta: resembles white noise, spatially uncorrelated.
 
 
 % disturbance covariance:
-a_w = 1e-2;
-sigma2_w = 1e-2;
-% Q_w = @(X,V) a_w*squexp(X,V,sigma2_w);                          % smooth disturbances
+a_w = 1e-1;
+sigma2_w = 1e0;
+Q_w = @(X,V) a_w*squexp(X,V,sigma2_w);                          % smooth disturbances
 % Q_w = @(X,V) zeros(size(X,1),size(V,1));                      % no disturbances
-Q_w = @(X,V) sigma2_w*eq(X(:),V(:).');  	                    % kroneckerDelta: resembles white noise, spatially uncorrelated.
+% Q_w = @(X,V) sigma2_w*eq(X(:),V(:).');  	                    % kroneckerDelta: resembles white noise, spatially uncorrelated.
 
 
 % measurement noise covariance:
-sigma2_v = 1e-5;
+sigma2_v = 1e-3;
 Q_v = @(X,V) sigma2_v*eq(X(:),V(:).');                          % kroneckerDelta: resembles white noise, spatially uncorrelated.
 
 
@@ -180,6 +182,7 @@ f_pred(:,1) = U_test.'*z_pred(:,1);
 % plotting:
 figure(1)
 clf
+set(gcf,'Color',[1 1 1])
 plot(x_test,f_true(:,1),'--k','DisplayName','True function','LineWidth',1)
 hold on; grid on
 plot(x_test,f_pred(:,1),'r','DisplayName','Mean estimate','LineWidth',1)
@@ -190,13 +193,14 @@ if plot_confidence_bounds
     plot(x_test,lcb,'b:','HandleVisibility','off')
     fill([x_test.', fliplr(x_test.')],[ucb.', fliplr(lcb.')],'cyan','FaceAlpha',0.3,'DisplayName','Estimated 95% conf.')
 end
-title('$t=0$')
-xlabel('$x$')
-ylabel('$f_{t}(x)$')
+title('$t=0$','FontSize',15)
+xlabel('$x$','FontSize',15)
+ylabel('$f_{t}(x)$','FontSize',15)
 legend()
+xlim([x_min x_max])
 
 
-pause()
+pause()     % check if functions are as expected
 
 
 %% Simulation Loop
@@ -242,6 +246,7 @@ for t=1:N
     % plotting:
     figure(1)
     clf
+    set(gcf,'Color',[1 1 1])
     plot(x_test,f_true(:,t),'--k','DisplayName','True function','LineWidth',1)
     hold on; grid on
     plot(x(:,t),y(:,t),'rx','Markersize',15,'DisplayName','Observation')
@@ -253,12 +258,14 @@ for t=1:N
         plot(x_test,lcb,'b:','HandleVisibility','off')
         fill([x_test.', fliplr(x_test.')],[ucb.', fliplr(lcb.')],'cyan','FaceAlpha',0.3,'DisplayName','Estimated 95% conf.')
     end
-    title(sprintf('$t=%i$',t),'FontSize',15)
+    title(sprintf('$t=%i$',t-1),'FontSize',15)
     xlabel('$x$','FontSize',15)
     ylabel('$f_{t}(x)$','FontSize',15)
     legend()
+    xlim([x_min x_max])
 
-    pause(0.15)      % for the sake of visualization
+
+    pause(0.15)
 
 
 end

@@ -10,6 +10,8 @@
 % Generation of the 'true' function data for DGP estimator based on a
 % simulation of the heat equation PDE in 1 spatial dimension, which we
 % sample at discrete time intervals.
+% Assumes dirac in the origin as initial condition and that the domain of x
+% is the real number line.
 
 
 
@@ -22,8 +24,8 @@ delta_t_HE = 1;        % sample time
 
 
 % measurement noise covariance matrix (inherits sigma2_v from Main.m):       
-Sigma2_v = sigma2_v*eye(p);   
-% Sigma2_v = zeros(p);
+% Sigma2_v = sigma2_v*eye(p);   
+Sigma2_v = zeros(p);
 
 
 %% Initialize Loop Variables
@@ -35,6 +37,7 @@ y = NaN(p,N);
 
 f_true = NaN(N_test,N);
 f_true_samp = NaN(p,N);
+
 
 
 %% Simulate 'true' system
