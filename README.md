@@ -10,7 +10,7 @@ Please use the following BibTeX citation when citing this work:
 
 ```
 @INPROCEEDINGS{Hulst2023,
-AUTHOR = {J. van Hulst and R. van Zuijlen and D. Antunes and W.P.M.H. Heemels},
+AUTHOR = {Jilles van Hulst and Roy van Zuijlen and Duarte Antunes and W.P.M.H. Heemels},
 TITLE = {Estimation of Dynamic Gaussian Processes},
 BOOKTITLE = {2023 IEEE 62nd Conference on Decision and Control (CDC)}
 MONTH = {December},
