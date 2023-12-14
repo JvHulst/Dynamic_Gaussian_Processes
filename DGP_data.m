@@ -27,8 +27,7 @@
 % f_true: [N_test by N]                  true function evaluated at x_test for very timestep
 
 
-% load('heat_equation_simulation_no_noise.mat');
-load('heat_equation_simulation_Dirichlet_noise.mat');
+load('heat_equation_simulation_no_noise.mat');
 
 
 %% Overwrite variables based on loaded dataset
