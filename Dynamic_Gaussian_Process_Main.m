@@ -102,7 +102,7 @@ m = @(X) zeros(size(X,1),1);                                    % zero mean
 
 
 % initial function covariance:
-a_f = 1e0;
+a_f = 1e-1;
 sigma2_f = 1e1;
 Q_f = @(X,V) a_f*squexp(X,V,sigma2_f);                          % smooth initial condition variance
 % Q_f = @(X,V) zeros(size(X,1),size(V,1));                        % no variance in i.c.
@@ -110,7 +110,7 @@ Q_f = @(X,V) a_f*squexp(X,V,sigma2_f);                          % smooth initial
 
 
 % disturbance covariance:
-a_w = 1e-1;
+a_w = 1e-2;
 sigma2_w = 1e0;
 Q_w = @(X,V) a_w*squexp(X,V,sigma2_w);                          % smooth disturbances
 % Q_w = @(X,V) zeros(size(X,1),size(V,1));                      % no disturbances
