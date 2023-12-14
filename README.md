@@ -5,6 +5,9 @@
 **Paper available at https://heemels.tue.nl/content/papers/HulZui_CDC23a.pdf**
 
 
+Any questions, inquirires or issues can be communicated to j.s.v.hulst@tue.nl
+
+
 
 Please use the following BibTeX citation when citing this work:
 
