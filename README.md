@@ -55,8 +55,9 @@ MATLAB/                              python/
 
 ### MATLAB
 
-Open `MATLAB/Dynamic_Gaussian_Process_Main.m` in MATLAB, edit the
-configuration block at the top, and run the script (press **F5**).
+```bash
+MATLAB/Dynamic_Gaussian_Process_Main.m
+```
 
 ### Python
 
